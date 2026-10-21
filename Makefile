@@ -41,7 +41,8 @@ BT_CXXFLAGS += -std=c++11
 endif
 
 BT_LDFLAGS =
-BT_LIBS    = -lz -lm -lbz2 -llzma -lpthread
+# bedtools-crossplatform: htslib 1.24's default config.h enables libcurl (https/s3).
+BT_LIBS    = -lz -lm -lbz2 -llzma -lcurl -lpthread
 
 prefix ?= /usr/local
 

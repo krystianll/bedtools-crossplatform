@@ -11,6 +11,8 @@
 
 #ifdef WITH_HTS_CB_API
 #include <htslib/hfile.h>
+// bedtools-crossplatform: callback API now in bedtools, not the bundled htslib.
+#include <HtsCallback.h>
 namespace htslib_future {
 	static inline ssize_t buf_write(void* data, const void* buf, size_t sz) 
 	{
