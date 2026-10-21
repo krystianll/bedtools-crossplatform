@@ -8,6 +8,7 @@
 #ifndef SINGLELINETEXTFILEREADER_H_
 #define SINGLELINETEXTFILEREADER_H_
 
+#include <stdint.h> // bedtools-crossplatform: int64_t for CHRPOS (gcc doesn't get it indirectly)
 #include <algorithm>
 #include "FileReader.h"
 #include "string.h"

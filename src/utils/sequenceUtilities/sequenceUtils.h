@@ -1,6 +1,7 @@
 #ifndef SEQUENCEUTILS_H
 #define SEQUENCEUTILS_H
 
+#include <stdint.h> // bedtools-crossplatform: int64_t for CHRPOS (gcc doesn't get it indirectly)
 #include <string>
 #include <algorithm>
 #include <cctype>

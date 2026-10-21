@@ -20,7 +20,9 @@
 #include "bedFile.h"
 #include "htslib/faidx.h"
 #include <sys/stat.h>
+#ifndef _WIN32 // bedtools-crossplatform: no mmap on Windows (and none used)
 #include <sys/mman.h>
+#endif
 #include "split.h"
 #include <stdlib.h>
 #include <ctype.h>

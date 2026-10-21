@@ -8,6 +8,25 @@
 #include "coverageFile.h"
 #include <iomanip>
 
+#ifdef _WIN32 // bedtools-crossplatform: MinGW has no asprintf
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+static int asprintf(char **strp, const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	int len = vsnprintf(NULL, 0, fmt, ap);
+	va_end(ap);
+	*strp = len < 0 ? NULL : (char *)malloc((size_t)len + 1);
+	if (*strp == NULL) return -1;
+	va_start(ap, fmt);
+	vsnprintf(*strp, (size_t)len + 1, fmt, ap);
+	va_end(ap);
+	return len;
+}
+#endif
+
 CoverageFile::CoverageFile(ContextCoverage *context)
 : IntersectFile(context),
  _depthArray(NULL),

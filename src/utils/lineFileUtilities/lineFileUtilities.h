@@ -1,6 +1,7 @@
 #ifndef LINEFILEUTILITIES_H
 #define LINEFILEUTILITIES_H
 
+#include <stdint.h> // bedtools-crossplatform: int64_t for CHRPOS (gcc doesn't get it indirectly)
 #include <vector>
 #include <string>
 #include <cstring>

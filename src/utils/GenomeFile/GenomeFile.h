@@ -12,6 +12,7 @@
 #ifndef GENOMEFILE_H
 #define GENOMEFILE_H
 
+#include <stdint.h> // bedtools-crossplatform: int64_t for CHRPOS (gcc doesn't get it indirectly)
 #include <map>
 #include <string>
 #include <iostream>

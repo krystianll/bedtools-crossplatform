@@ -41,8 +41,7 @@ BT_CXXFLAGS += -std=c++11
 endif
 
 BT_LDFLAGS =
-# bedtools-crossplatform: htslib 1.24's default config.h enables libcurl (https/s3).
-BT_LIBS    = -lz -lm -lbz2 -llzma -lcurl -lpthread
+BT_LIBS    = -lz -lm -lbz2 -llzma -lpthread
 
 prefix ?= /usr/local
 
@@ -173,6 +172,17 @@ $(OBJ_DIR)/htsutil.o: $(SRC_DIR)/htsutil.cpp $(OBJ_DIR)/htsutil.d
 # HTSlib's htslib.mk provides rules to rebuild $(HTSDIR)/libhts.a.
 HTSDIR = src/utils/htslib
 include $(HTSDIR)/htslib.mk
+
+# bedtools-crossplatform: link the libraries htslib was built with, as htslib reports them in
+# htslib_static.mk: its configure result (e.g. libdeflate, regex, ws2_32 on
+# Windows), or for an unconfigured htslib its defaults (-lz -lm -lbz2 -llzma -lcurl).
+-include $(HTSDIR)/htslib_static.mk
+BT_LIBS = $(HTSLIB_static_LDFLAGS) $(HTSLIB_static_LIBS) -lpthread
+ifeq ($(OS),Windows_NT)
+# htslib's configure adds -lregex (MinGW's regcomp) to its own LIBS but not to
+# htslib_static.mk.
+BT_LIBS += -lregex
+endif
 
 # This order-only prerequisite ensures OBJ_DIR exists before building any .o file
 # but ignores the directory's timestamp, which changes every time a .o file is written.

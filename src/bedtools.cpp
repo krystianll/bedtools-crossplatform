@@ -19,6 +19,11 @@
 #include <stdlib.h>
 #include "version.h"
 #include "BedtoolsDriver.h"
+#ifdef _WIN32 // bedtools-crossplatform: binary I/O
+#include <fcntl.h>
+#include <io.h>
+#include <stdio.h>
+#endif
 
 using namespace std;
 
@@ -108,6 +113,15 @@ int parse_global_args(int argc, char** argv) {
 
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+	// bedtools-crossplatform: Windows opens files and the standard streams in
+	// text mode (LF -> CRLF on output, 0x1A ends input). Make everything binary,
+	// as on Unix: BAM/BGZF data and LF-only text output.
+	_fmode = _O_BINARY;
+	_setmode(_fileno(stdin), _O_BINARY);
+	_setmode(_fileno(stdout), _O_BINARY);
+	_setmode(_fileno(stderr), _O_BINARY);
+#endif
 	argc = parse_global_args(argc, argv);
     // make sure the user at least entered a sub_command
     if (argc < 2) return bedtools_help();

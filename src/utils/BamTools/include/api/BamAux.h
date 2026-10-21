@@ -1,3 +1,4 @@
+#include <stdint.h> // bedtools-crossplatform: int32_t (gcc doesn't get it indirectly)
 #include <string>
 
 #ifndef BAMAUX_H
