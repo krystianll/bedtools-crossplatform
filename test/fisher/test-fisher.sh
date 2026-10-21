@@ -103,6 +103,8 @@ echo -e "    fisher.t5...\c"
 $BT fisher -b test.bed -a tumor.gff -g dm6.fai > exp
 DIR="${TMPDIR:-/tmp}/Users/mvandenb/src/genomic_features_bardin_lab/build/modencode/dm6/bed/"
 LONG_PATH="$DIR/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaS-\(phospho-S2\)_.bed"
+# bedtools-crossplatform: backslash is a path separator on Windows; drop it, keep the parentheses.
+if [ "$OS" = "Windows_NT" ]; then LONG_PATH="${LONG_PATH//\\/}"; fi
 mkdir -p "$DIR"
 cp test.bed "$LONG_PATH"
 $BT fisher -b "$LONG_PATH" -a tumor.gff -g dm6.fai > obs
