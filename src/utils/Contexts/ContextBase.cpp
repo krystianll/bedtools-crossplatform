@@ -72,6 +72,10 @@ ContextBase::ContextBase()
   _nameConventionWarningTripped(false)
 
 {
+	// bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
+	_runToQueryEnd = false;
+	_isCram = false;
+
 	_programNames["intersect"] = INTERSECT;
 	_programNames["sample"] = SAMPLE;
 	_programNames["map"] = MAP;

@@ -21,6 +21,10 @@ ContextClosest::ContextClosest()
 	_multiDbMode(EACH_DB),
 	_numClosestHitsWanted(1)
 {
+	// bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
+	_forceUpstream = false;
+	_forceDownstream = false;
+
 	// closest requires sorted input
 	setSortedInput(true);
 

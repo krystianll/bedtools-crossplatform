@@ -9,6 +9,9 @@
 
 ContextComplement::ContextComplement()
 {
+	// bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
+	_onlyChromsWithBedRecords = false;
+
 	setSortedInput(true);
 	setUseMergedIntervals(true);
 	setExplicitBedOutput(true);

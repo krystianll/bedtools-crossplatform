@@ -13,6 +13,9 @@ ContextCoverage::ContextCoverage()
   _showHist(false),
   _coverageType(DEFAULT)
 {
+	// bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
+	_mean = false;
+
 	setExplicitBedOutput(true); //do not allow BAM output
 	setRunToQueryEnd(true);
 }

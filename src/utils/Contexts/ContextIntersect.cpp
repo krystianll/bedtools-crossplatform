@@ -9,6 +9,9 @@
 
 ContextIntersect::ContextIntersect()
 {
+	// bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
+	_shouldRunToDbEnd = false;
+
 
 }
 

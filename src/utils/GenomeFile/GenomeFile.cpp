@@ -15,16 +15,23 @@
 
 GenomeFile::GenomeFile(const string &genomeFile) {
     _genomeFile = genomeFile;
+    _genomeLength = 0; // bedtools-crossplatform: initialise (was read uninitialised; undefined behaviour on every platform)
     loadGenomeFileIntoMap();
 }
 
 GenomeFile::GenomeFile(const RefVector &genome) {
+    // bedtools-crossplatform: also set the genome length and per-chromosome
+    // offsets, as the file constructor does (projectOnGenome indexed an empty
+    // _startOffsets and _genomeLength was uninitialised).
+    _genomeLength = 0;
     for (size_t i = 0; i < genome.size(); ++i) {
         string chrom = genome[i].RefName;
         int length = genome[i].RefLength;
         
         _chromSizes[chrom] = length;
         _chromList.push_back(chrom);
+        _startOffsets.push_back(_genomeLength);
+        _genomeLength += length;
     }
 }
 
@@ -64,7 +71,8 @@ void GenomeFile::loadGenomeFileIntoMap() {
                     // strtol  will set p2End to the start of the string if non-integral, base 10
                     if (p2End != genomeFields[1].c_str()) {
                         string chrom       = genomeFields[0];
-                        CHRPOS size           = atol(genomeFields[1].c_str());
+                        // bedtools-crossplatform: 64-bit parse (long is 32-bit on Windows)
+                        CHRPOS size           = strtoll(genomeFields[1].c_str(), NULL, 10);
                         _chromSizes[chrom] = size;
                         _chromList.push_back(chrom);
                         _startOffsets.push_back(_genomeLength);
