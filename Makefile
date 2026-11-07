@@ -183,14 +183,19 @@ ifeq ($(OS),Windows_NT)
 # htslib_static.mk.
 BT_LIBS += -lregex
 endif
+# bedtools-crossplatform: the htslib library bedtools and test/htsutil link. Default: the
+# static library built from HTSDIR. ngs-tools links a shared htslib instead, e.g.
+# make HTSDIR=../STAR/htslib HTSLIB_LIB=../STAR/htslib/libhts.dll.a
+HTSLIB_LIB ?= $(HTSDIR)/libhts.a
 
 # This order-only prerequisite ensures OBJ_DIR exists before building any .o file
 # but ignores the directory's timestamp, which changes every time a .o file is written.
 $(BUILT_OBJECTS): | $(OBJ_DIR)
 
-$(BIN_DIR)/bedtools: autoversion $(BUILT_OBJECTS) $(HTSDIR)/libhts.a | $(BIN_DIR)
+# bedtools-crossplatform: $(HTSLIB_LIB) instead of $(HTSDIR)/libhts.a (here and in test/htsutil).
+$(BIN_DIR)/bedtools: autoversion $(BUILT_OBJECTS) $(HTSLIB_LIB) | $(BIN_DIR)
 	@echo "- Building main bedtools binary."
-	$(CCPREFIX) $(CC_WRAPPER) $(CXX) $(ALL_LDFLAGS) -o $(BIN_DIR)/bedtools $(BUILT_OBJECTS) $(HTSDIR)/libhts.a $(ALL_LIBS)
+	$(CCPREFIX) $(CC_WRAPPER) $(CXX) $(ALL_LDFLAGS) -o $(BIN_DIR)/bedtools $(BUILT_OBJECTS) $(HTSLIB_LIB) $(ALL_LIBS)
 	@echo "done."
 
 $(BIN_DIR)/bedtools.static: autoversion $(BUILT_OBJECTS) $(HTSDIR)/libhts.a | $(BIN_DIR)
@@ -198,8 +203,8 @@ $(BIN_DIR)/bedtools.static: autoversion $(BUILT_OBJECTS) $(HTSDIR)/libhts.a | $(
 	$(CCPREFIX) $(CC_WRAPPER) $(CXX) -static $(ALL_LDFLAGS) -o $(BIN_DIR)/bedtools.static $(BUILT_OBJECTS) $(HTSDIR)/libhts.a $(ALL_LIBS)
 	@echo "done."
 
-test/htsutil: $(OBJ_DIR)/htsutil.o $(HTSDIR)/libhts.a
-	$(CCPREFIX) $(CC_WRAPPER) $(CXX) $(ALL_LDFLAGS) -o test/htsutil $(OBJ_DIR)/htsutil.o $(HTSDIR)/libhts.a $(ALL_LIBS)
+test/htsutil: $(OBJ_DIR)/htsutil.o $(HTSLIB_LIB)
+	$(CCPREFIX) $(CC_WRAPPER) $(CXX) $(ALL_LDFLAGS) -o test/htsutil $(OBJ_DIR)/htsutil.o $(HTSLIB_LIB) $(ALL_LIBS)
 
 $(BIN_DIR)/intersectBed: | $(BIN_DIR)
 	@echo "- Creating executables for old CLI."
